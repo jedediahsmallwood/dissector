@@ -1,0 +1,43 @@
+body {
+    font: 62.5% Lucida Grande;
+}
+
+.containerWrapper {
+    background: #eee;
+    border-radius: 10px;
+    margin: 0 auto;
+}
+
+.menu {
+    padding: 1em;
+    margin: auto;
+    width: 50%;
+}
+
+.menuItem {
+    padding: .2em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.menuItem a {
+    width: 50%;
+    margin: auto;
+}
+
+.seriesGroup {
+    padding: 1em;
+    width: 75%;
+}
+
+.optionsGroup {
+    padding: 1em;
+    width: 25%;
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #2779AA;
+    -webkit-column-count: 2;
+    -webkit-column-gap: 2em;
+    column-count: 2;
+    column-gap: 2em;
+}
