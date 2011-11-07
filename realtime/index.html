@@ -8,7 +8,7 @@
     <script type='text/javascript' src='../js/jquery-1.7.min.js'></script>
     <script type='text/javascript' src='../js/highstock-1.0.1.js'></script>
     <script type="text/javascript" src="../js/jquery-ui-1.8.16.custom.min.js"></script>
-    
+
     <script type="text/javascript">
         var chart;
         $(document).ready(function() {
@@ -24,12 +24,14 @@
                         { type: 'day', count: 1, text: '1d'},
                         { type: 'all', text: 'All'}
                     ]},
-                //Setting null series
+                legend: {
+                    enabled: true
+                },
                 series: [
-                    {data:[]},
-                    {data:[]},
-                    {data:[]},
-                    {data:[]}
+                    {name: 'Series 1', data:[]},
+                    {name: 'Series 2', data:[]},
+                    {name: 'Series 3', data:[]},
+                    {name: 'Series 4', data:[]}
                 ]
             });
 

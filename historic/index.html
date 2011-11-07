@@ -25,12 +25,15 @@
                         { type: 'day', count: 1, text: '1d'},
                         { type: 'all', text: 'All'}
                     ]},
-                //Setting null series
+                legend: {
+                    enabled: true,
+                    verticalAlign: "top"
+                },
                 series: [
-                    {data:[]},
-                    {data:[]},
-                    {data:[]},
-                    {data:[]}
+                    {name: 'Series 1', data:[]},
+                    {name: 'Series 2', data:[]},
+                    {name: 'Series 3', data:[]},
+                    {name: 'Series 4', data:[]}
                 ]
             });
 
