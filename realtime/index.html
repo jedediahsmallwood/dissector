@@ -2,18 +2,39 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title>Scatter Plot Analysis</title>
+    <title>Real Time</title>
     <link type="text/css" href="../css/cupertino/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
     <link type="text/css" href="../css/dissector.css" rel="stylesheet"/>
-    <script src='../js/jquery-1.7.min.js' type='text/javascript'></script>
-    <script src='../js/highcharts-2.1.7.js' type='text/javascript'></script>
+    <script type='text/javascript' src='../js/jquery-1.7.min.js'></script>
+    <script type='text/javascript' src='../js/highstock-1.0.1.js'></script>
     <script type="text/javascript" src="../js/jquery-ui-1.8.16.custom.min.js"></script>
     
     <script type="text/javascript">
+        var chart;
         $(document).ready(function() {
-            $('#render1').button();
-            $('#start,#stop').datepicker({ dateFormat: 'yy-mm-dd' });
-            
+            chart = new Highcharts.StockChart({
+                chart: {
+                    renderTo: 'chart'
+                },
+                rangeSelector: {
+                    selected: 1
+                },
+                rangeSelector: {
+                    buttons: [
+                        { type: 'day', count: 1, text: '1d'},
+                        { type: 'all', text: 'All'}
+                    ]},
+                //Setting null series
+                series: [
+                    {data:[]},
+                    {data:[]},
+                    {data:[]},
+                    {data:[]}
+                ]
+            });
+
+            $('#render1, #render2, #render3, #render4').button();
+            $('#stop1, #stop2, #stop3, #stop4').button();
             $('#render1').click(function() {
 
                 renderData(null, $('#ta1').val());
@@ -21,10 +42,10 @@
 
         });
 
-        function renderData(series, equation) {
+        function renderRealTimeData(series, equation) {
             var start = new Date('2011-01-01T10:00:00.000');
             var stop = new Date('2011-10-30T00:00:00.000');
-            var socket = new WebSocket('ws://localhost:1081/1.0/event/get');
+            var socket = new WebSocket('ws://localhost:1081/1.0/metric/get');
 
             socket.onopen = function() {
                 console.info("Socket opened");
@@ -35,25 +56,65 @@
                 console.info(event.data);
                 var d = $.parseJSON(event.data);
                 var point = [(new Date(d.time)).getTime(), d.value];
-                //series.addPoint(point);
+                series.addPoint(point);
             };
         }
 
     </script>
 </head>
 <body>
-<!-- <div id='container' style='width: 100%; height: 400px'></div> -->
+<div class='banner'><a href='../index.html'>Dissector</a> - Real Time</div>
+<div id='chart' style='width: 100%; height: 400px'></div>
 <div class='containerWrapper'>
     <div id='options' class='optionsGroup'>
-        <div>Start <input type='text' id='start'></div>
-        <div>Stop <input type='text' id='stop'></div>
+        <div>
+            Interval
+            <select id='interval'>
+                <option value="300000">5 minutes</option>
+                <option value="3600000">1 hour</option>
+                <option value="86400000">1 day</option>
+            </select>
+        </div>
     </div>
     <div id='series' class='seriesGroup'>
         <div id='series1'>
+            <h3>Series 1</h3>
+
             <div>
-                <textarea id='ta1' cols='80' rows='3'></textarea>
+                <textarea id='ta1' rows='3'></textarea>
                 <br/>
                 <input id='render1' type='button' value='Render'/>
+                <input id='stop1' type='button' value='Stop'/>
+            </div>
+        </div>
+        <div id='series2'>
+            <h3>Series 2</h3>
+
+            <div>
+                <textarea id='ta2' rows='3'></textarea>
+                <br/>
+                <input id='render2' type='button' value='Render'/>
+                <input id='stop2' type='button' value='Stop'/>
+            </div>
+        </div>
+        <div id='series3'>
+            <h3>Series 3</h3>
+
+            <div>
+                <textarea id='ta3' rows='3'></textarea>
+                <br/>
+                <input id='render3' type='button' value='Render'/>
+                <input id='stop3' type='button' value='Stop'/>
+            </div>
+        </div>
+        <div id='series4'>
+            <h3>Series 4</h3>
+
+            <div>
+                <textarea id='ta4' rows='3'></textarea>
+                <br/>
+                <input id='render4' type='button' value='Render'/>
+                <input id='stop4' type='button' value='Stop'/>
             </div>
         </div>
     </div>

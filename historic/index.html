@@ -3,7 +3,7 @@
 
 <html>
 <head>
-    <title>Time Series Analysis</title>
+    <title>Historic</title>
     <link type="text/css" href="../css/cupertino/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
     <link type="text/css" href="../css/dissector.css" rel="stylesheet"/>
     <script type='text/javascript' src='../js/jquery-1.7.min.js'></script>
@@ -15,7 +15,7 @@
         $(document).ready(function() {
             chart = new Highcharts.StockChart({
                 chart: {
-                    renderTo: 'container'
+                    renderTo: 'chart'
                 },
                 rangeSelector: {
                     selected: 1
@@ -28,52 +28,90 @@
                 //Setting null series
                 series: [
                     {data:[]},
+                    {data:[]},
+                    {data:[]},
                     {data:[]}
                 ]
             });
 
-            $('#render1, #render2').button();
-            $('#start,#stop').datepicker({ dateFormat: 'yy-mm-dd' });
+            $('#render1, #render2, #render3, #render4').button();
+            $('#start').datepicker({ dateFormat: 'yy-mm-dd',
+                onClose: function(dateText, inst) {
+                    var stopVal = $('#stop');
+                    if (dateText != '' && $('#stop').val() == '') {
+                        $('#stop').val(dateText);
+                    }
+                }});
+            $('#stop').datepicker({ dateFormat: 'yy-mm-dd'});
 
             $('#render1').click(function() {
                 chart.series[0].setData([]);
                 chart.redraw();
-                renderData(chart.series[0],
+                renderHistoricData(chart.series[0],
                         $('#ta1').val(),
                         $('#start').val(),
-                        $('#stop').val());
+                        $('#stop').val(),
+                        $('#interval').val(),
+                        $('#shift').val());
             });
 
             $('#render2').click(function() {
                 chart.series[1].setData([]);
                 chart.redraw();
-                renderData(chart.series[1],
+                renderHistoricData(chart.series[1],
                         $('#ta2').val(),
                         $('#start').val(),
-                        $('#stop').val());
+                        $('#stop').val(),
+                        $('#interval').val(),
+                        $('#shift').val());
+            });
+
+            $('#render3').click(function() {
+                chart.series[2].setData([]);
+                chart.redraw();
+                renderHistoricData(chart.series[2],
+                        $('#ta3').val(),
+                        $('#start').val(),
+                        $('#stop').val(),
+                        $('#interval').val(),
+                        $('#shift').val());
+            });
+
+            $('#render4').click(function() {
+                chart.series[3].setData([]);
+                chart.redraw();
+                renderHistoricData(chart.series[3],
+                        $('#ta4').val(),
+                        $('#start').val(),
+                        $('#stop').val(),
+                        $('#interval').val(),
+                        $('#shift').val());
             });
         });
 
-        function renderData(series, equation, start, stop) {
+        function renderHistoricData(series, equation, start, stop, interval, shift) {
             var start = new Date(start + 'T00:00:00.000');
             var stop = new Date(stop + 'T23:59:59.000');
-            var current = new Date(start.getTime() + 300000);
+            var interval = parseInt(interval);
+            var shift = parseInt(shift) * 1000;
+            var currentTime = start.getTime() + interval;
+            console.info(currentTime);
+            var current = new Date(start.getTime() + interval);
             var socket = new WebSocket('ws://localhost:1081/1.0/metric/get');
 
             socket.onopen = function() {
                 console.info("Socket opened");
-                socket.send('{"expression":"' + equation + '","start":"' + start.toISOString() + '", "stop": "' + current.toISOString() + '", "step": 300000}');
+                socket.send('{"expression":"' + equation + '","start":"' + start.toISOString() + '", "stop": "' + current.toISOString() + '", "step": ' + interval + '}');
             };
 
             socket.onmessage = function(event) {
-                console.info(event.data);
                 var d = $.parseJSON(event.data);
-                var point = [(new Date(d.time)).getTime(), d.value];
+                var point = [(new Date(d.time)).getTime() + shift, d.value];
                 series.addPoint(point);
 
                 if (current.getTime() < stop.getTime()) {
-                    var next = new Date(current.getTime() + 300000);
-                    socket.send('{"expression":"' + equation + '","start":"' + current.toISOString() + '", "stop": "' + next.toISOString() + '", "step": 300000}');
+                    var next = new Date(current.getTime() + interval);
+                    socket.send('{"expression":"' + equation + '","start":"' + current.toISOString() + '", "stop": "' + next.toISOString() + '", "step": ' + interval + '}');
                     current = next;
                 } else {
                     console.info("Closing socket");
@@ -84,25 +122,57 @@
     </script>
 </head>
 <body>
-<div id='container' style='width: 100%; height: 400px'></div>
+<div class='banner'><a href='../index.html'>Dissector</a> - Historic</div>
+<div id='chart' style='width: 100%; height: 400px'></div>
 <div class='containerWrapper'>
     <div id='options' class='optionsGroup'>
         <div>Start <input type='text' id='start'></div>
         <div>Stop <input type='text' id='stop'></div>
+        <div>
+            Interval
+            <select id='interval'>
+                <option value="300000">5 minutes</option>
+                <option value="3600000">1 hour</option>
+                <option value="86400000">1 day</option>
+            </select>
+        </div>
+        <div>Shift <input type='text' id='shift' value='0'></div>
     </div>
     <div id='series' class='seriesGroup'>
         <div id='series1'>
+            <h3>Series 1</h3>
+
             <div>
-                <textarea id='ta1' cols='80' rows='3'></textarea>
+                <textarea id='ta1' rows='3'></textarea>
                 <br/>
                 <input id='render1' type='button' value='Render'/>
             </div>
         </div>
         <div id='series2'>
+            <h3>Series 2</h3>
+
             <div>
-                <textarea id='ta2' cols='80' rows='3'></textarea>
+                <textarea id='ta2' rows='3'></textarea>
                 <br/>
                 <input id='render2' type='button' value='Render'/>
+            </div>
+        </div>
+        <div id='series3'>
+            <h3>Series 3</h3>
+
+            <div>
+                <textarea id='ta3' rows='3'></textarea>
+                <br/>
+                <input id='render3' type='button' value='Render'/>
+            </div>
+        </div>
+        <div id='series4'>
+            <h3>Series 4</h3>
+
+            <div>
+                <textarea id='ta4' rows='3'></textarea>
+                <br/>
+                <input id='render4' type='button' value='Render'/>
             </div>
         </div>
     </div>
