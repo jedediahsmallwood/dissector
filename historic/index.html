@@ -8,6 +8,7 @@
     <link type="text/css" href="../css/dissector.css" rel="stylesheet"/>
     <script type='text/javascript' src='../js/jquery-1.7.min.js'></script>
     <script type='text/javascript' src='../js/highstock-1.0.1.js'></script>
+    <script type='text/javascript' src='../js/exporting-1.0.1.js'></script>
     <script type="text/javascript" src="../js/jquery-ui-1.8.16.custom.min.js"></script>
 
     <script type='text/javascript'>
@@ -28,6 +29,11 @@
                 legend: {
                     enabled: true,
                     verticalAlign: "top"
+                },
+                exporting: {
+                    width: 1024,
+                    filename: "historic",
+                    type: "image/png"
                 },
                 series: [
                     {name: 'Series 1', data:[]},
