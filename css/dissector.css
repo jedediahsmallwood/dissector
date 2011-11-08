@@ -45,6 +45,11 @@ body {
     resize: none;
 }
 
+.seriesGroup .ui-progressbar {
+    width: 91%;
+    display: none;
+}
+
 .optionsGroup {
     padding: 1em;
     width: 70em;

@@ -44,6 +44,8 @@
             });
 
             $('#render1, #render2, #render3, #render4').button();
+            $('#progressbar1, #progressbar2, #progressbar3, #progressbar4').progressbar({ disabled: true });
+            
             $('#start').datepicker({ dateFormat: 'yy-mm-dd',
                 onClose: function(dateText, inst) {
                     var stopVal = $('#stop');
@@ -61,8 +63,10 @@
                         $('#start').val(),
                         $('#stop').val(),
                         $('#interval').val(),
-                        $('#shift').val());
+                        $('#shift').val(),
+                        $('#progressbar1'));
             });
+
 
             $('#render2').click(function() {
                 chart.series[1].setData([]);
@@ -72,7 +76,8 @@
                         $('#start').val(),
                         $('#stop').val(),
                         $('#interval').val(),
-                        $('#shift').val());
+                        $('#shift').val(),
+                        $('#progressbar2'));
             });
 
             $('#render3').click(function() {
@@ -83,7 +88,8 @@
                         $('#start').val(),
                         $('#stop').val(),
                         $('#interval').val(),
-                        $('#shift').val());
+                        $('#shift').val(),
+                        $('#progressbar3'));
             });
 
             $('#render4').click(function() {
@@ -94,19 +100,26 @@
                         $('#start').val(),
                         $('#stop').val(),
                         $('#interval').val(),
-                        $('#shift').val());
+                        $('#shift').val(),
+                        $('#progressbar4'));
             });
         });
 
-        function renderHistoricData(series, equation, start, stop, interval, shift) {
+        function renderHistoricData(series, equation, start, stop, interval, shift, progressbar) {
             var start = new Date(start + 'T00:00:00.000');
             var stop = new Date(stop + 'T23:59:59.000');
             var interval = parseInt(interval);
             var shift = parseInt(shift) * 1000;
             var currentTime = start.getTime() + interval;
-            console.info(currentTime);
             var current = new Date(start.getTime() + interval);
             var socket = new WebSocket('ws://localhost:1081/1.0/metric/get');
+
+            progressbar.show('blind');
+            progressbar.progressbar("option", "disabled", false);
+            progressbar.progressbar("option", "value", 0);
+
+            var totalMetrics = Math.round((stop.getTime() - start.getTime()) / interval);
+            var observedMetrics = 0;
 
             socket.onopen = function() {
                 console.info("Socket opened");
@@ -118,6 +131,9 @@
                 var point = [(new Date(d.time)).getTime() + shift, d.value];
                 series.addPoint(point);
 
+                observedMetrics++;
+                progressbar.progressbar("option", "value", Math.round((observedMetrics / totalMetrics) * 100));
+
                 if (current.getTime() < stop.getTime()) {
                     var next = new Date(current.getTime() + interval);
                     socket.send('{"expression":"' + equation + '","start":"' + current.toISOString() + '", "stop": "' + next.toISOString() + '", "step": ' + interval + '}');
@@ -125,6 +141,9 @@
                 } else {
                     console.info("Closing socket");
                     socket.close();
+                    progressbar.progressbar("option", "disabled", true);
+                    progressbar.hide('blind');
+                    chart.redraw();
                 }
             };
         }
@@ -154,6 +173,7 @@
             <div>
                 <textarea id='ta1' rows='3'></textarea>
                 <br/>
+                <div id="progressbar1"></div>
                 <input id='render1' type='button' value='Render'/>
             </div>
         </div>
@@ -163,6 +183,7 @@
             <div>
                 <textarea id='ta2' rows='3'></textarea>
                 <br/>
+                <div id="progressbar2"></div>
                 <input id='render2' type='button' value='Render'/>
             </div>
         </div>
@@ -172,6 +193,7 @@
             <div>
                 <textarea id='ta3' rows='3'></textarea>
                 <br/>
+                <div id="progressbar3"></div>
                 <input id='render3' type='button' value='Render'/>
             </div>
         </div>
@@ -181,6 +203,7 @@
             <div>
                 <textarea id='ta4' rows='3'></textarea>
                 <br/>
+                <div id="progressbar4"></div>
                 <input id='render4' type='button' value='Render'/>
             </div>
         </div>
