@@ -36,16 +36,18 @@
                     type: "image/png"
                 },
                 series: [
-                    {name: 'Series 1', data:[]},
-                    {name: 'Series 2', data:[]},
-                    {name: 'Series 3', data:[]},
-                    {name: 'Series 4', data:[]}
+                    {name: 'Series 1', data:[], id: 'series1'},
+                    {name: 'Series 2', data:[], id: 'series2'},
+                    {name: 'Series 3', data:[], id: 'series3'},
+                    {name: 'Series 4', data:[], id: 'series4'},
+                    {name: 'Series 5', data:[], id: 'series5'},
+                    {name: 'Series 6', data:[], id: 'series6'}
                 ]
             });
 
-            $('#render1, #render2, #render3, #render4').button();
-            $('#progressbar1, #progressbar2, #progressbar3, #progressbar4').progressbar({ disabled: true });
-            
+            $('#render1, #render2, #render3, #render4, #render5, #render6').button();
+            $('#progressbar1, #progressbar2, #progressbar3, #progressbar4, #progressbar5, #progressbar6').progressbar({ disabled: true });
+
             $('#start').datepicker({ dateFormat: 'yy-mm-dd',
                 onClose: function(dateText, inst) {
                     var stopVal = $('#stop');
@@ -102,6 +104,30 @@
                         $('#interval').val(),
                         $('#shift').val(),
                         $('#progressbar4'));
+            });
+
+            $('#render5').click(function() {
+                chart.series[4].setData([]);
+                chart.redraw();
+                renderHistoricData(chart.series[4],
+                        $('#ta5').val(),
+                        $('#start').val(),
+                        $('#stop').val(),
+                        $('#interval').val(),
+                        $('#shift').val(),
+                        $('#progressbar5'));
+            });
+
+            $('#render6').click(function() {
+                chart.series[5].setData([]);
+                chart.redraw();
+                renderHistoricData(chart.series[5],
+                        $('#ta6').val(),
+                        $('#start').val(),
+                        $('#stop').val(),
+                        $('#interval').val(),
+                        $('#shift').val(),
+                        $('#progressbar6'));
             });
         });
 
@@ -167,44 +193,74 @@
         <div>Shift <input type='text' id='shift' value='0'></div>
     </div>
     <div id='series' class='seriesGroup'>
-        <div id='series1'>
-            <h3>Series 1</h3>
+        <div class='seriesColumn'>
+            <div id='series1'>
+                <h3>Series 1</h3>
 
-            <div>
-                <textarea id='ta1' rows='3'></textarea>
-                <br/>
-                <div id="progressbar1"></div>
-                <input id='render1' type='button' value='Render'/>
+                <div>
+                    <textarea id='ta1' rows='3'></textarea>
+                    <br/>
+
+                    <div id="progressbar1"></div>
+                    <input id='render1' type='button' value='Render'/>
+                </div>
+            </div>
+            <div id='series2'>
+                <h3>Series 2</h3>
+
+                <div>
+                    <textarea id='ta2' rows='3'></textarea>
+                    <br/>
+
+                    <div id="progressbar2"></div>
+                    <input id='render2' type='button' value='Render'/>
+                </div>
+            </div>
+            <div id='series3'>
+                <h3>Series 3</h3>
+
+                <div>
+                    <textarea id='ta3' rows='3'></textarea>
+                    <br/>
+
+                    <div id="progressbar3"></div>
+                    <input id='render3' type='button' value='Render'/>
+                </div>
             </div>
         </div>
-        <div id='series2'>
-            <h3>Series 2</h3>
+        <div class='seriesColumn'>
+            <div id='series4'>
+                <h3>Series 4</h3>
 
-            <div>
-                <textarea id='ta2' rows='3'></textarea>
-                <br/>
-                <div id="progressbar2"></div>
-                <input id='render2' type='button' value='Render'/>
+                <div>
+                    <textarea id='ta4' rows='3'></textarea>
+                    <br/>
+
+                    <div id="progressbar4"></div>
+                    <input id='render4' type='button' value='Render'/>
+                </div>
             </div>
-        </div>
-        <div id='series3'>
-            <h3>Series 3</h3>
+            <div id='series5'>
+                <h3>Series 5</h3>
 
-            <div>
-                <textarea id='ta3' rows='3'></textarea>
-                <br/>
-                <div id="progressbar3"></div>
-                <input id='render3' type='button' value='Render'/>
+                <div>
+                    <textarea id='ta5' rows='3'></textarea>
+                    <br/>
+
+                    <div id="progressbar5"></div>
+                    <input id='render5' type='button' value='Render'/>
+                </div>
             </div>
-        </div>
-        <div id='series4'>
-            <h3>Series 4</h3>
+            <div id='series6'>
+                <h3>Series 6</h3>
 
-            <div>
-                <textarea id='ta4' rows='3'></textarea>
-                <br/>
-                <div id="progressbar4"></div>
-                <input id='render4' type='button' value='Render'/>
+                <div>
+                    <textarea id='ta6' rows='3'></textarea>
+                    <br/>
+
+                    <div id="progressbar6"></div>
+                    <input id='render6' type='button' value='Render'/>
+                </div>
             </div>
         </div>
     </div>

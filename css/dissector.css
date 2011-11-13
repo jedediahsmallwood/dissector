@@ -34,10 +34,9 @@ body {
 
 .seriesGroup {
     padding:  1em;
-    -webkit-column-count: 2;
-    -webkit-column-gap: 2em;
-    column-count: 2;
-    column-gap: 2em;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-flex: 1;
 }
 
 .seriesGroup textarea {
@@ -46,9 +45,16 @@ body {
 }
 
 .seriesGroup .ui-progressbar {
-    width: 91%;
+    width: 90.5%;
     display: none;
 }
+
+.seriesColumn {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    width: 50%;
+}
+
 
 .optionsGroup {
     padding: 1em;
@@ -56,8 +62,9 @@ body {
     font-weight: bold;
     font-size: 1.1em;
     color: #2779AA;
-    -webkit-columns: 4;
-    columns: 4;
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-flex: 1;
 }
 
 .banner {

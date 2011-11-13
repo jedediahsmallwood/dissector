@@ -38,23 +38,25 @@
                     {name: 'Series 1', data:[]},
                     {name: 'Series 2', data:[]},
                     {name: 'Series 3', data:[]},
-                    {name: 'Series 4', data:[]}
+                    {name: 'Series 4', data:[]},
+                    {name: 'Series 5', data:[]},
+                    {name: 'Series 6', data:[]}
                 ]
             });
 
-            $('#render1, #render2, #render3, #render4').button();
-            $('#stop1, #stop2, #stop3, #stop4').button();
+            $('#render1, #render2, #render3, #render4, #render5, #render6').button();
+            $('#stop1, #stop2, #stop3, #stop4, #stop5, #stop6').button();
             $('#render1').click(function() {
 
-                renderData(null, $('#ta1').val());
+                renderRealTimeData(null, $('#ta1').val());
             });
 
         });
 
         function renderRealTimeData(series, equation) {
-            var start = new Date('2011-01-01T10:00:00.000');
-            var stop = new Date('2011-10-30T00:00:00.000');
-            var socket = new WebSocket('ws://localhost:1081/1.0/metric/get');
+            var start = new Date('2011-11-11T00:00:00.000');
+            var stop = new Date('2011-11-13T22:00:00.000');
+            var socket = new WebSocket('ws://localhost:1081/1.0/event/get');
 
             socket.onopen = function() {
                 console.info("Socket opened");
@@ -65,7 +67,7 @@
                 console.info(event.data);
                 var d = $.parseJSON(event.data);
                 var point = [(new Date(d.time)).getTime(), d.value];
-                series.addPoint(point);
+                //series.addPoint(point);
             };
         }
 
@@ -86,48 +88,71 @@
         </div>
     </div>
     <div id='series' class='seriesGroup'>
-        <div id='series1'>
-            <h3>Series 1</h3>
+        <div class='seriesColumn'>
+            <div id='series1'>
+                <h3>Series 1</h3>
 
-            <div>
-                <textarea id='ta1' rows='3'></textarea>
-                <br/>
-                <input id='render1' type='button' value='Render'/>
-                <input id='stop1' type='button' value='Stop'/>
+                <div>
+                    <textarea id='ta1' rows='3'></textarea>
+                    <br/>
+                    <input id='render1' type='button' value='Render'/>
+                    <input id='stop1' type='button' value='Stop'/>
+                </div>
+            </div>
+            <div id='series2'>
+                <h3>Series 2</h3>
+
+                <div>
+                    <textarea id='ta2' rows='3'></textarea>
+                    <br/>
+                    <input id='render2' type='button' value='Render'/>
+                    <input id='stop2' type='button' value='Stop'/>
+                </div>
+            </div>
+            <div id='series3'>
+                <h3>Series 3</h3>
+
+                <div>
+                    <textarea id='ta3' rows='3'></textarea>
+                    <br/>
+                    <input id='render3' type='button' value='Render'/>
+                    <input id='stop3' type='button' value='Stop'/>
+                </div>
             </div>
         </div>
-        <div id='series2'>
-            <h3>Series 2</h3>
+        <div class='seriesColumn'>
+            <div id='series4'>
+                <h3>Series 4</h3>
 
-            <div>
-                <textarea id='ta2' rows='3'></textarea>
-                <br/>
-                <input id='render2' type='button' value='Render'/>
-                <input id='stop2' type='button' value='Stop'/>
+                <div>
+                    <textarea id='ta4' rows='3'></textarea>
+                    <br/>
+                    <input id='render4' type='button' value='Render'/>
+                    <input id='stop4' type='button' value='Stop'/>
+                </div>
             </div>
-        </div>
-        <div id='series3'>
-            <h3>Series 3</h3>
+            <div id='series5'>
+                <h3>Series 5</h3>
 
-            <div>
-                <textarea id='ta3' rows='3'></textarea>
-                <br/>
-                <input id='render3' type='button' value='Render'/>
-                <input id='stop3' type='button' value='Stop'/>
+                <div>
+                    <textarea id='ta5' rows='3'></textarea>
+                    <br/>
+                    <input id='render5' type='button' value='Render'/>
+                    <input id='stop5' type='button' value='Stop'/>
+                </div>
             </div>
-        </div>
-        <div id='series4'>
-            <h3>Series 4</h3>
+            <div id='series6'>
+                <h3>Series 6</h3>
 
-            <div>
-                <textarea id='ta4' rows='3'></textarea>
-                <br/>
-                <input id='render4' type='button' value='Render'/>
-                <input id='stop4' type='button' value='Stop'/>
+                <div>
+                    <textarea id='ta6' rows='3'></textarea>
+                    <br/>
+                    <input id='render6' type='button' value='Render'/>
+                    <input id='stop6' type='button' value='Stop'/>
+                </div>
             </div>
         </div>
     </div>
 </div>
-</body>
 </body>
 </html>
