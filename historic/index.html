@@ -13,6 +13,8 @@
 
     <script type='text/javascript'>
         var chart;
+        var sockets = new Array();
+
         $(document).ready(function() {
             chart = new Highcharts.StockChart({
                 chart: {
@@ -46,6 +48,9 @@
             });
 
             $('#render1, #render2, #render3, #render4, #render5, #render6').button();
+            $('#stop1, #stop2, #stop3, #stop4, #stop5, #stop6').button();
+            $('#stop1, #stop2, #stop3, #stop4, #stop5, #stop6').hide();
+
             $('#progressbar1, #progressbar2, #progressbar3, #progressbar4, #progressbar5, #progressbar6').progressbar({ disabled: true });
 
             $('#start').datepicker({ dateFormat: 'yy-mm-dd',
@@ -73,14 +78,25 @@
                         $('#start').val(),
                         $('#stop').val(),
                         $('#shift').val())) {
-                    renderHistoricData(chart.series[series - 1],
+                    sockets[series] = renderHistoricData(chart.series[series - 1],
                             $('#ta' + series).val(),
                             $('#start').val(),
                             $('#stop').val(),
                             $('#interval').val(),
                             $('#shift').val(),
                             $('#progressbar' + series));
+                    $('#stop' + series).show();
                 }
+            });
+            $('#stop' + series).click(function() {
+                var socket = sockets[series];
+
+                if (null != socket) {
+                    socket.close();
+                }
+
+                $('#progressbar' + series).hide();
+                $('#stop' + series).hide();
             });
         }
 
@@ -155,6 +171,8 @@
                     chart.redraw();
                 }
             };
+
+            return socket;
         }
     </script>
 </head>
@@ -184,7 +202,7 @@
     <div id='series' class='seriesGroup'>
         <div class='seriesColumn'>
             <div id='series1'>
-                <h3>Series 1</h3>
+                <h3 id='seriesLable1'>Series 1</h3>
 
                 <div>
                     <textarea id='ta1' rows='3'></textarea>
@@ -198,6 +216,7 @@
                     </div>
                     <div id="progressbar1"></div>
                     <input id='render1' type='button' value='Render'/>
+                    <input id='stop1' type='button' value='Stop'/>
                 </div>
             </div>
             <div id='series2'>
@@ -215,6 +234,7 @@
                     </div>
                     <div id="progressbar2"></div>
                     <input id='render2' type='button' value='Render'/>
+                    <input id='stop2' type='button' value='Stop'/>
                 </div>
             </div>
             <div id='series3'>
@@ -232,6 +252,7 @@
                     </div>
                     <div id="progressbar3"></div>
                     <input id='render3' type='button' value='Render'/>
+                    <input id='stop3' type='button' value='Stop'/>
                 </div>
             </div>
         </div>
@@ -251,6 +272,7 @@
                     </div>
                     <div id="progressbar4"></div>
                     <input id='render4' type='button' value='Render'/>
+                    <input id='stop4' type='button' value='Stop'/>
                 </div>
             </div>
             <div id='series5'>
@@ -269,6 +291,7 @@
 
                     <div id="progressbar5"></div>
                     <input id='render5' type='button' value='Render'/>
+                    <input id='stop5' type='button' value='Stop'/>
                 </div>
             </div>
             <div id='series6'>
@@ -286,6 +309,7 @@
                     </div>
                     <div id="progressbar6"></div>
                     <input id='render6' type='button' value='Render'/>
+                    <input id='stop6' type='button' value='Stop'/>
                 </div>
             </div>
         </div>
