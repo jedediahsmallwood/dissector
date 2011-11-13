@@ -49,6 +49,12 @@ body {
     display: none;
 }
 
+.seriesGroup .seriesGroupError {
+    font-size: 1.1em;
+    display: none;
+    width: 91%;
+}
+
 .seriesColumn {
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -58,13 +64,24 @@ body {
 
 .optionsGroup {
     padding: 1em;
-    width: 70em;
     font-weight: bold;
     font-size: 1.1em;
     color: #2779AA;
     display: -webkit-box;
     -webkit-box-orient: horizontal;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
     -webkit-box-flex: 1;
+}
+
+.optionsGroupElement {
+    -webkit-box-flex: 1;
+}
+
+.optionsGroupError {
+    font-size: 1.1em;
+    padding: 1em;
+    display: none;
 }
 
 .banner {
