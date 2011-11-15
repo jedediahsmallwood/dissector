@@ -48,6 +48,7 @@
             });
 
             $('#render1, #render2, #render3, #render4, #render5, #render6').button();
+            $('#clear1, #clear2, #clear3, #clear4, #clear5, #clear6').button();
             $('#stop1, #stop2, #stop3, #stop4, #stop5, #stop6').button();
             $('#stop1, #stop2, #stop3, #stop4, #stop5, #stop6').hide();
 
@@ -84,16 +85,25 @@
                             $('#stop').val(),
                             $('#interval').val(),
                             $('#shift').val(),
-                            $('#progressbar' + series));
+                            $('#progressbar' + series),
+                            $('#stop' + series));
                     $('#stop' + series).show();
                 }
             });
+
+            $('#clear' + series).click(function() {
+                $('#stop' + series).click();
+                chart.get('series' + series).setData([]);
+                chart.redraw();
+            });
+            
             $('#stop' + series).click(function() {
                 var socket = sockets[series];
 
                 if (null != socket) {
                     socket.close();
                 }
+                sockets[series] = null;
 
                 $('#progressbar' + series).hide();
                 $('#stop' + series).hide();
@@ -130,7 +140,7 @@
             return true;
         }
 
-        function renderHistoricData(series, equation, start, stop, interval, shift, progressbar) {
+        function renderHistoricData(series, equation, start, stop, interval, shift, progressBar, stopButton) {
             var start = new Date(start + 'T00:00:00.000Z');
             var stop = new Date(stop + 'T23:59:59.000Z');
             var interval = parseInt(interval);
@@ -139,9 +149,9 @@
             var current = new Date(start.getTime() + interval);
             var socket = new WebSocket('ws://localhost:1081/1.0/metric/get');
 
-            progressbar.show('blind');
-            progressbar.progressbar("option", "disabled", false);
-            progressbar.progressbar("option", "value", 0);
+            progressBar.show('blind');
+            progressBar.progressbar("option", "disabled", false);
+            progressBar.progressbar("option", "value", 0);
 
             var totalMetrics = Math.round((stop.getTime() - start.getTime()) / interval);
             var observedMetrics = 0;
@@ -157,7 +167,7 @@
                 series.addPoint(point);
 
                 observedMetrics++;
-                progressbar.progressbar("option", "value", Math.round((observedMetrics / totalMetrics) * 100));
+                progressBar.progressbar("option", "value", Math.round((observedMetrics / totalMetrics) * 100));
 
                 if (current.getTime() < stop.getTime()) {
                     var next = new Date(current.getTime() + interval);
@@ -166,8 +176,9 @@
                 } else {
                     console.info("Closing socket");
                     socket.close();
-                    progressbar.progressbar("option", "disabled", true);
-                    progressbar.hide('blind');
+                    progressBar.progressbar("option", "disabled", true);
+                    progressBar.hide('blind');
+                    stopButton.hide();
                     chart.redraw();
                 }
             };
@@ -187,7 +198,7 @@
             Interval
             <select id='interval'>
                 <option value="300000">5 minutes</option>
-                <option value="3600000">1 hour</option>
+                <option value="3600000" selected="selected">1 hour</option>
                 <option value="86400000">1 day</option>
             </select>
         </div>
@@ -216,6 +227,7 @@
                     </div>
                     <div id="progressbar1"></div>
                     <input id='render1' type='button' value='Render'/>
+                    <input id='clear1' type='button' value='Clear'/>
                     <input id='stop1' type='button' value='Stop'/>
                 </div>
             </div>
@@ -234,6 +246,7 @@
                     </div>
                     <div id="progressbar2"></div>
                     <input id='render2' type='button' value='Render'/>
+                    <input id='clear2' type='button' value='Clear'/>
                     <input id='stop2' type='button' value='Stop'/>
                 </div>
             </div>
@@ -252,6 +265,7 @@
                     </div>
                     <div id="progressbar3"></div>
                     <input id='render3' type='button' value='Render'/>
+                    <input id='clear3' type='button' value='Clear'/>
                     <input id='stop3' type='button' value='Stop'/>
                 </div>
             </div>
@@ -272,6 +286,7 @@
                     </div>
                     <div id="progressbar4"></div>
                     <input id='render4' type='button' value='Render'/>
+                    <input id='clear4' type='button' value='Clear'/>
                     <input id='stop4' type='button' value='Stop'/>
                 </div>
             </div>
@@ -291,6 +306,7 @@
 
                     <div id="progressbar5"></div>
                     <input id='render5' type='button' value='Render'/>
+                    <input id='clear5' type='button' value='Clear'/>
                     <input id='stop5' type='button' value='Stop'/>
                 </div>
             </div>
@@ -309,6 +325,7 @@
                     </div>
                     <div id="progressbar6"></div>
                     <input id='render6' type='button' value='Render'/>
+                    <input id='clear6' type='button' value='Clear'/>
                     <input id='stop6' type='button' value='Stop'/>
                 </div>
             </div>
