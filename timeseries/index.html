@@ -3,325 +3,101 @@
 
 <html>
 <head>
-<title>Historic</title>
-<link type="text/css" href="../css/cupertino/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
-<link type="text/css" href="../css/dissector.css" rel="stylesheet"/>
-<script type='text/javascript' src='../js/jquery-1.7.min.js'></script>
-<script type='text/javascript' src='../js/highstock-1.0.1.js'></script>
-<script type='text/javascript' src='../js/exporting-1.0.1.js'></script>
-<script type="text/javascript" src="../js/jquery-ui-1.8.16.custom.min.js"></script>
+    <title>Historic</title>
+    <link type="text/css" href="../css/cupertino/jquery-ui-1.8.16.custom.css" rel="stylesheet"/>
+    <link type="text/css" href="../css/dissector.css" rel="stylesheet"/>
+    <script type='text/javascript' src='../js/dissector-config.js'></script>
+    <script type='text/javascript' src='../js/dissector.js'></script>
+    <script type='text/javascript' src='../js/jquery-1.7.min.js'></script>
+    <script type='text/javascript' src='../js/highstock-1.0.1.js'></script>
+    <script type='text/javascript' src='../js/exporting-1.0.1.js'></script>
+    <script type="text/javascript" src="../js/jquery-ui-1.8.16.custom.min.js"></script>
 
-<script type='text/javascript'>
-var chart;
-var sockets = new Array();
+    <script type='text/javascript'>
+        var chart;
+        var sockets = new Array();
 
-$(document).ready(function() {
-    chart = new Highcharts.StockChart({
-        chart: {
-            renderTo: 'chart'
-        },
-        rangeSelector: {
-            selected: 1
-        },
-        rangeSelector: {
-            buttons: [
-                { type: 'day', count: 1, text: '1d'},
-                { type: 'all', text: 'All'}
-            ]},
-        legend: {
-            enabled: true,
-            verticalAlign: "top"
-        },
-        exporting: {
-            width: 1024,
-            filename: "historic",
-            type: "image/png"
-        },
-        plotOptions: {
-            series: { connectNulls: true }
-        },
-        series: [
-            {name: 'Series 1', data:[], id: 'series1'},
-            {name: 'Series 2', data:[], id: 'series2'},
-            {name: 'Series 3', data:[], id: 'series3'},
-            {name: 'Series 4', data:[], id: 'series4'},
-            {name: 'Series 5', data:[], id: 'series5'},
-            {name: 'Series 6', data:[], id: 'series6'}
-        ]
-    });
+        $(document).ready(function() {
+            chart = new Highcharts.StockChart({
+                chart: {
+                    renderTo: 'chart'
+                },
+                rangeSelector: {
+                    selected: 1
+                },
+                rangeSelector: {
+                    buttons: [
+                        { type: 'day', count: 1, text: '1d'},
+                        { type: 'all', text: 'All'}
+                    ]},
+                legend: {
+                    enabled: true,
+                    verticalAlign: "top"
+                },
+                exporting: {
+                    width: 1024,
+                    filename: "historic",
+                    type: "image/png"
+                },
+                plotOptions: {
+                    series: { connectNulls: true }
+                },
+                series: [
+                    {name: 'Series 1', data:[], id: 'series1'},
+                    {name: 'Series 2', data:[], id: 'series2'},
+                    {name: 'Series 3', data:[], id: 'series3'},
+                    {name: 'Series 4', data:[], id: 'series4'},
+                    {name: 'Series 5', data:[], id: 'series5'},
+                    {name: 'Series 6', data:[], id: 'series6'}
+                ]
+            });
 
-    var params = getUrlVars();
+            var params = getUrlVars();
 
-    $('#render1, #render2, #render3, #render4, #render5, #render6').button();
-    $('#clear1, #clear2, #clear3, #clear4, #clear5, #clear6').button();
-    $('#stop1, #stop2, #stop3, #stop4, #stop5, #stop6').button();
-    $('#stop1, #stop2, #stop3, #stop4, #stop5, #stop6').hide();
+            $('#render1, #render2, #render3, #render4, #render5, #render6').button();
+            $('#clear1, #clear2, #clear3, #clear4, #clear5, #clear6').button();
+            $('#stop1, #stop2, #stop3, #stop4, #stop5, #stop6').button();
+            $('#stop1, #stop2, #stop3, #stop4, #stop5, #stop6').hide();
 
-    $('#progressbar1, #progressbar2, #progressbar3, #progressbar4, #progressbar5, #progressbar6').progressbar({ disabled: true });
+            $('#progressbar1, #progressbar2, #progressbar3, #progressbar4, #progressbar5, #progressbar6').progressbar({ disabled: true });
 
-    $('#start').datepicker({ dateFormat: 'yy-mm-dd',
-        onClose: function(dateText, inst) {
-            var stopVal = $('#stop');
-            if (dateText != '' && $('#stop').val() == '') {
-                $('#stop').val(dateText);
-            }
-        }});
-    $('#stop').datepicker({ dateFormat: 'yy-mm-dd'});
-    $('#from').datepicker({ dateFormat: 'yy-mm-dd'});
+            $('#start').datepicker({ dateFormat: 'yy-mm-dd',
+                onClose: function(dateText, inst) {
+                    var stopVal = $('#stop');
+                    if (dateText != '' && $('#stop').val() == '') {
+                        $('#stop').val(dateText);
+                    }
+                }});
+            $('#stop').datepicker({ dateFormat: 'yy-mm-dd'});
+            $('#from').datepicker({ dateFormat: 'yy-mm-dd'});
 
-    //Do mode specific setup.
-    if (params['mode'] == 'realtime') {
-        $('#dissectorType').text('Real Time');
-        $('#startInput').hide();
-        $('#stopInput').hide();
-        $('#shiftInput').hide();
-        initForRealTimeSeries(1);
-        initForRealTimeSeries(2);
-        initForRealTimeSeries(3);
-        initForRealTimeSeries(4);
-        initForRealTimeSeries(5);
-        initForRealTimeSeries(6);
+            //Do mode specific setup.
+            if (params['mode'] == 'realtime') {
+                $('#dissectorType').text('Real Time');
+                $('#startInput').hide();
+                $('#stopInput').hide();
+                $('#shiftInput').hide();
+                initForRealTimeSeries(1);
+                initForRealTimeSeries(2);
+                initForRealTimeSeries(3);
+                initForRealTimeSeries(4);
+                initForRealTimeSeries(5);
+                initForRealTimeSeries(6);
 
-    } else {
-        $('#dissectorType').text('Historic');
-        $('#fromInput').hide();
-        initForHistoricSeries(1);
-        initForHistoricSeries(2);
-        initForHistoricSeries(3);
-        initForHistoricSeries(4);
-        initForHistoricSeries(5);
-        initForHistoricSeries(6);
-    }
-
-
-});
-
-function initForHistoricSeries(series) {
-    $('#render' + series).click(function() {
-        chart.get('series' + series).setData([]);
-        chart.redraw();
-        if (validateHistoricSeries(series, $('#ta' + series).val(),
-                $('#start').val(),
-                $('#stop').val(),
-                $('#shift').val())) {
-            sockets[series] = renderHistoricData(chart.series[series - 1],
-                    $('#ta' + series).val(),
-                    $('#start').val(),
-                    $('#stop').val(),
-                    $('#interval').val(),
-                    $('#shift').val(),
-                    $('#progressbar' + series),
-                    $('#stop' + series));
-            $('#stop' + series).show();
-        }
-    });
-
-    initCommonButtons(series);
-}
-
-function initForRealTimeSeries(series) {
-    $('#render' + series).click(function() {
-        chart.get('series' + series).setData([]);
-        chart.redraw();
-        if (validateRealTimeSeries(series, $('#ta' + series).val(),
-                $('#from').val(),
-                $('#interval').val())) {
-            sockets[series] = renderRealTimeData(chart.series[series - 1],
-                    $('#ta' + series).val(),
-                    $('#from').val(),
-                    $('#interval').val(),
-                    $('#progressbar' + series),
-                    $('#stop' + series));
-            $('#stop' + series).show();
-        }
-    });
-
-    initCommonButtons(series);
-}
-
-function initCommonButtons(series) {
-    $('#clear' + series).click(function() {
-        $('#stop' + series).click();
-        chart.get('series' + series).setData([]);
-        chart.redraw();
-    });
-
-    $('#stop' + series).click(function() {
-        var socket = sockets[series];
-
-        if (null != socket) {
-            socket.close();
-        }
-        sockets[series] = null;
-
-        $('#progressbar' + series).hide();
-        $('#stop' + series).hide();
-    });
-}
-
-function validateHistoricSeries(series, equation, start, stop, shift) {
-    var startTime = new Date(start + 'T00:00:00.000Z');
-    var stopTime = new Date(stop + 'T23:59:59.000Z');
-
-    $('#optionsError').hide();
-    $('#seriesError' + series).hide();
-
-    var errorPrefix = '<strong>Error: </strong>';
-
-    if (start == '' || stop == '' || startTime.getTime() >= stopTime.getTime()) {
-        $('#optionsErrorMessage').html(errorPrefix + 'Specify a start and stop date, and ensure the stop time is >= to start date.');
-        $('#optionsError').show('blind');
-        return false;
-    }
-
-    if (shift == '' || isNaN(parseInt(shift))) {
-        $('#optionsErrorMessage').html(errorPrefix + 'Shift must be a number');
-        $('#optionsError').show('blind');
-        return false;
-    }
-
-    if (equation == '') {
-        $('#seriesErrorMessage' + series).html(errorPrefix + 'Provide series equation');
-        $('#seriesError' + series).show('blind');
-        return false;
-    }
-
-    return true;
-}
-
-function renderHistoricData(series, equation, start, stop, interval, shift, progressBar, stopButton) {
-    var start = new Date(start + 'T00:00:00.000Z');
-    var stop = new Date(stop + 'T23:59:59.000Z');
-    var interval = parseInt(interval);
-    var shift = parseInt(shift) * 1000;
-    var currentTime = start.getTime() + interval;
-    var current = new Date(start.getTime() + interval);
-    var socket = new WebSocket('ws://localhost:1081/1.0/metric/get');
-
-    progressBar.show('blind');
-    progressBar.progressbar("option", "disabled", false);
-    progressBar.progressbar("option", "value", 0);
-
-    var totalMetrics = Math.round((stop.getTime() - start.getTime()) / interval);
-    var observedMetrics = 0;
-
-    socket.onopen = function() {
-        console.info("Socket opened");
-        socket.send('{"expression":"' + equation + '","start":"' + start.toISOString() + '", "stop": "' + current.toISOString() + '", "step": ' + interval + '}');
-    };
-
-    socket.onmessage = function(event) {
-        var d = $.parseJSON(event.data);
-        var point = [(new Date(d.time)).getTime() + shift, d.value];
-        series.addPoint(point);
-
-        observedMetrics++;
-        progressBar.progressbar("option", "value", Math.round((observedMetrics / totalMetrics) * 100));
-
-        if (current.getTime() < stop.getTime()) {
-            var next = new Date(current.getTime() + interval);
-            socket.send('{"expression":"' + equation + '","start":"' + current.toISOString() + '", "stop": "' + next.toISOString() + '", "step": ' + interval + '}');
-            current = next;
-        } else {
-            console.info("Closing socket");
-            socket.close();
-            progressBar.progressbar("option", "disabled", true);
-            progressBar.hide('blind');
-            stopButton.hide();
-            chart.redraw();
-        }
-    };
-
-    return socket;
-}
-
-function validateRealTimeSeries(series, equation, from) {
-
-    var fromTime = new Date(from + 'T00:00:00.000Z');
-
-    $('#optionsError').hide();
-    $('#seriesError' + series).hide();
-
-    var errorPrefix = '<strong>Error: </strong>';
-
-    if (from == '' || fromTime.getTime() == 0) {
-        $('#optionsErrorMessage').html(errorPrefix + 'Specify a valid from date');
-        $('#optionsError').show('blind');
-        return false;
-    }
-
-    if (equation == '') {
-        $('#seriesErrorMessage' + series).html(errorPrefix + 'Provide series equation');
-        $('#seriesError' + series).show('blind');
-        return false;
-    }
-
-    return true;
-}
-
-function renderRealTimeData(series, equation, from, interval, progressBar, stopButton) {
-    var from = new Date(from + 'T00:00:00.000Z');
-    var interval = parseInt(interval);
-    var stop = new Date((new Date()).getTime() - interval);
-    var currentTime = from.getTime() + interval;
-    var current = new Date(from.getTime() + interval);
-    var next;
-    var socket = new WebSocket('ws://localhost:1081/1.0/metric/get');
-    var shiftingMode = false;
-
-    progressBar.show('blind');
-    progressBar.progressbar("option", "disabled", false);
-    progressBar.progressbar("option", "value", 100);
-
-    socket.onopen = function() {
-        console.info("Socket opened");
-        socket.send('{"expression":"' + equation + '","start":"' + from.toISOString() + '", "stop": "' + current.toISOString() + '", "step": ' + interval + '}');
-    };
-
-    socket.onmessage = function(event) {
-        var d = $.parseJSON(event.data);
-        var point = [(new Date(d.time)).getTime(), d.value];
-
-        if( !shiftingMode && (current.getTime() >= stop.getTime())) {
-            shiftingMode = true;
-        }
-
-        series.addPoint(point, true, shiftingMode);
-
-        if (!shiftingMode) {
-            next = new Date(current.getTime() + interval);
-            socket.send('{"expression":"' + equation + '","start":"' + current.toISOString() + '", "stop": "' + next.toISOString() + '", "step": ' + interval + '}');
-            current = next;
-        } else {
-            next = new Date(current.getTime() + interval);
-            var timeout = next.getTime() - (new Date()).getTime();
-
-            if (timeout <= 0) {
-                timeout = interval;
+            } else {
+                $('#dissectorType').text('Historic');
+                $('#fromInput').hide();
+                initForHistoricSeries(1);
+                initForHistoricSeries(2);
+                initForHistoricSeries(3);
+                initForHistoricSeries(4);
+                initForHistoricSeries(5);
+                initForHistoricSeries(6);
             }
 
-            setTimeout(function() {
-                socket.send('{"expression":"' + equation + '","start":"' + current.toISOString() + '", "stop": "' + next.toISOString() + '", "step": ' + interval + '}');
-                current = next;
-            }, timeout);
-        }
-    };
+        });
 
-    return socket;
-
-}
-
-function getUrlVars() {
-    var vars = [], hash;
-    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-    for (var i = 0; i < hashes.length; i++) {
-        hash = hashes[i].split('=');
-        vars.push(hash[0]);
-        vars[hash[0]] = hash[1];
-    }
-    return vars;
-}
-</script>
+    </script>
 </head>
 <body>
 <div class='banner'><a href='../index.html'>Dissector</a> - <span id='dissectorType'></span></div>
