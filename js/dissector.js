@@ -78,23 +78,10 @@ function initBoard(params) {
     }
 
 
-    if (params['series1']) {
-        $('#ta1').val(safeUnescape(params['series1']))
-    }
-    if (params['series2']) {
-        $('#ta2').val(safeUnescape(params['series2']))
-    }
-    if (params['series3']) {
-        $('#ta3').val(safeUnescape(params['series3']))
-    }
-    if (params['series4']) {
-        $('#ta4').val(safeUnescape(params['series4']))
-    }
-    if (params['series5']) {
-        $('#ta5').val(safeUnescape(params['series5']))
-    }
-    if (params['series6']) {
-        $('#ta6').val(safeUnescape(params['series6']))
+    for (var i = 1; i <= 6; i++) {
+        if (params['series' + i]) {
+            $('#ta' + i).val(safeUnescape(params['series' + i]))
+        }
     }
 
     //Do mode specific setup.
@@ -103,22 +90,24 @@ function initBoard(params) {
         $('#startInput').hide();
         $('#stopInput').hide();
         $('#shiftInput').hide();
-        initForRealTimeSeries(1);
-        initForRealTimeSeries(2);
-        initForRealTimeSeries(3);
-        initForRealTimeSeries(4);
-        initForRealTimeSeries(5);
-        initForRealTimeSeries(6);
+
+        for (var i = 1; i <= 6; i++) {
+            initForRealTimeSeries(i);
+        }
 
     } else {
         $('#dissectorType').text('Historic');
         $('#fromInput').hide();
-        initForHistoricSeries(1);
-        initForHistoricSeries(2);
-        initForHistoricSeries(3);
-        initForHistoricSeries(4);
-        initForHistoricSeries(5);
-        initForHistoricSeries(6);
+
+        for (var i = 1; i <= 6; i++) {
+            initForHistoricSeries(i);
+        }
+    }
+
+    for (var i = 1; i <= 6; i++) {
+        if ($('#ta' + i).val().trim() != '') {
+            $('#render' + i).click();
+        }
     }
 
 }
@@ -291,11 +280,11 @@ function generateShareLink(board) {
 }
 
 function safeEscape(value) {
-    return encodeURI(value).replace('\'','%27').replace('(','%28').replace(')','%29');
+    return encodeURI(value).replace('\'', '%27').replace('(', '%28').replace(')', '%29');
 }
 
 function safeUnescape(value) {
-    return decodeURI(value).replace('%27','\'').replace('%28','(').replace('%29',')');
+    return decodeURI(value).replace('%27', '\'').replace('%28', '(').replace('%29', ')');
 }
 
 function getUrlVars() {
