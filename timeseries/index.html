@@ -15,7 +15,6 @@
 
     <script type='text/javascript'>
         var chart;
-        var sockets = new Array();
 
         $(document).ready(function() {
             chart = new Highcharts.StockChart({
@@ -52,8 +51,6 @@
                 ]
             });
 
-            var params = getUrlVars();
-
             $('#render1, #render2, #render3, #render4, #render5, #render6').button();
             $('#clear1, #clear2, #clear3, #clear4, #clear5, #clear6').button();
             $('#stop1, #stop2, #stop3, #stop4, #stop5, #stop6').button();
@@ -71,38 +68,61 @@
             $('#stop').datepicker({ dateFormat: 'yy-mm-dd'});
             $('#from').datepicker({ dateFormat: 'yy-mm-dd'});
 
-            //Do mode specific setup.
-            if (params['mode'] == 'realtime') {
-                $('#dissectorType').text('Real Time');
-                $('#startInput').hide();
-                $('#stopInput').hide();
-                $('#shiftInput').hide();
-                initForRealTimeSeries(1);
-                initForRealTimeSeries(2);
-                initForRealTimeSeries(3);
-                initForRealTimeSeries(4);
-                initForRealTimeSeries(5);
-                initForRealTimeSeries(6);
-
-            } else {
-                $('#dissectorType').text('Historic');
-                $('#fromInput').hide();
-                initForHistoricSeries(1);
-                initForHistoricSeries(2);
-                initForHistoricSeries(3);
-                initForHistoricSeries(4);
-                initForHistoricSeries(5);
-                initForHistoricSeries(6);
+            var params = getUrlVars();
+            if( 'true' == params['embedded'] ) {
+                $('#banner').hide();
+                $('#configuration').hide();
             }
+
+            initBoard(params);
+
+            $('#shareLinkDialog').dialog({
+                buttons: [
+                    {
+                        text: "Ok",
+                        click: function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                ],
+                autoOpen: false,
+                width: '400px'
+            });
+
+            $('#shareLink').click(function() {
+
+                var board = {
+                    mode: params['mode'],
+                    start: $('#start').val(),
+                    stop: $('#stop').val(),
+                    from: $('#from').val(),
+                    interval: $('#interval').val(),
+                    series1: $('#ta1').val(),
+                    series2: $('#ta2').val(),
+                    series3: $('#ta3').val(),
+                    series4: $('#ta4').val(),
+                    series5: $('#ta5').val(),
+                    series6: $('#ta6').val()
+
+                };
+
+                $('#shareLinkUrl').val(generateShareLink(board));
+                board['embedded'] = true;
+                $('#shareLinkUrlEmbedded').val(generateShareLink(board));
+                $('#shareLinkDialog').dialog('open');
+            });
 
         });
 
     </script>
 </head>
 <body>
-<div class='banner'><a href='../index.html'>Dissector</a> - <span id='dissectorType'></span></div>
+<div id='banner' class='banner'>
+    <div id='title' class='title'><a href='../index.html'>Dissector</a> - <span id='dissectorType'></span></div>
+    <div id='share' class='share'><span><img id='shareLink' src='../images/link.png' height='16px'/></span></div>
+</div>
 <div id='chart' style='width: 100%; height: 400px'></div>
-<div class='containerWrapper'>
+<div id='configuration' class='containerWrapper'>
     <div id='options' class='optionsGroup'>
         <div class='optionsGroupElement' id='fromInput'>From <input type='text' id='from'></div>
         <div class='optionsGroupElement' id='startInput'>Start <input type='text' id='start'></div>
@@ -242,6 +262,30 @@
                     <input id='stop6' type='button' value='Stop'/>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<div id='shareLinkDialog' title='Export Board'>
+    <p>
+        Copy the following link to share or save the current board settings. Utilize the embedded version to host the
+        graph and configured series in another web page.
+        Using either link will automatically start to render the series.
+    </p>
+
+    <div>
+        <div>
+            <strong>Link</strong>
+        </div>
+        <div>
+            <input id='shareLinkUrl'/>
+        </div>
+    </div>
+    <div>
+        <div>
+            <strong>Embedded Link</strong>
+        </div>
+        <div>
+            <input id='shareLinkUrlEmbedded'/>
         </div>
     </div>
 </div>

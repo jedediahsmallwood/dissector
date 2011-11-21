@@ -1,19 +1,21 @@
+var sockets = new Array();
+
 function initForHistoricSeries(series) {
     $('#render' + series).click(function() {
         chart.get('series' + series).setData([]);
         chart.redraw();
         if (validateHistoricSeries(series, $('#ta' + series).val(),
+            $('#start').val(),
+            $('#stop').val(),
+            $('#shift').val())) {
+            sockets[series] = renderHistoricData(chart.series[series - 1],
+                $('#ta' + series).val(),
                 $('#start').val(),
                 $('#stop').val(),
-                $('#shift').val())) {
-            sockets[series] = renderHistoricData(chart.series[series - 1],
-                    $('#ta' + series).val(),
-                    $('#start').val(),
-                    $('#stop').val(),
-                    $('#interval').val(),
-                    $('#shift').val(),
-                    $('#progressbar' + series),
-                    $('#stop' + series));
+                $('#interval').val(),
+                $('#shift').val(),
+                $('#progressbar' + series),
+                $('#stop' + series));
             $('#stop' + series).show();
         }
     });
@@ -26,14 +28,14 @@ function initForRealTimeSeries(series) {
         chart.get('series' + series).setData([]);
         chart.redraw();
         if (validateRealTimeSeries(series, $('#ta' + series).val(),
-                $('#from').val(),
-                $('#interval').val())) {
+            $('#from').val(),
+            $('#interval').val())) {
             sockets[series] = renderRealTimeData(chart.series[series - 1],
-                    $('#ta' + series).val(),
-                    $('#from').val(),
-                    $('#interval').val(),
-                    $('#progressbar' + series),
-                    $('#stop' + series));
+                $('#ta' + series).val(),
+                $('#from').val(),
+                $('#interval').val(),
+                $('#progressbar' + series),
+                $('#stop' + series));
             $('#stop' + series).show();
         }
     });
@@ -59,6 +61,66 @@ function initCommonButtons(series) {
         $('#progressbar' + series).hide();
         $('#stop' + series).hide();
     });
+}
+
+function initBoard(params) {
+    if (params['start']) {
+        $('#start').val(params['start'])
+    }
+    if (params['stop']) {
+        $('#stop').val(params['stop'])
+    }
+    if (params['from']) {
+        $('#from').val(params['from'])
+    }
+    if (params['interval']) {
+        $('#interval').val(params['interval'])
+    }
+
+
+    if (params['series1']) {
+        $('#ta1').val(safeUnescape(params['series1']))
+    }
+    if (params['series2']) {
+        $('#ta2').val(safeUnescape(params['series2']))
+    }
+    if (params['series3']) {
+        $('#ta3').val(safeUnescape(params['series3']))
+    }
+    if (params['series4']) {
+        $('#ta4').val(safeUnescape(params['series4']))
+    }
+    if (params['series5']) {
+        $('#ta5').val(safeUnescape(params['series5']))
+    }
+    if (params['series6']) {
+        $('#ta6').val(safeUnescape(params['series6']))
+    }
+
+    //Do mode specific setup.
+    if (params['mode'] == 'realtime') {
+        $('#dissectorType').text('Real Time');
+        $('#startInput').hide();
+        $('#stopInput').hide();
+        $('#shiftInput').hide();
+        initForRealTimeSeries(1);
+        initForRealTimeSeries(2);
+        initForRealTimeSeries(3);
+        initForRealTimeSeries(4);
+        initForRealTimeSeries(5);
+        initForRealTimeSeries(6);
+
+    } else {
+        $('#dissectorType').text('Historic');
+        $('#fromInput').hide();
+        initForHistoricSeries(1);
+        initForHistoricSeries(2);
+        initForHistoricSeries(3);
+        initForHistoricSeries(4);
+        initForHistoricSeries(5);
+        initForHistoricSeries(6);
+    }
+
 }
 
 function validateHistoricSeries(series, equation, start, stop, shift) {
@@ -184,7 +246,7 @@ function renderRealTimeData(series, equation, from, interval, progressBar, stopB
         var d = $.parseJSON(event.data);
         var point = [(new Date(d.time)).getTime(), d.value];
 
-        if( !shiftingMode && (current.getTime() >= stop.getTime())) {
+        if (!shiftingMode && (current.getTime() >= stop.getTime())) {
             shiftingMode = true;
         }
 
@@ -213,6 +275,29 @@ function renderRealTimeData(series, equation, from, interval, progressBar, stopB
 
 }
 
+function generateShareLink(board) {
+
+    var url = window.location.protocol + '//' + window.location.pathname + '?';
+
+    for (var name in board) {
+        if (board.hasOwnProperty(name)) {
+            if (null != board[name] && board[name] != '') {
+                url = url + name + '=' + safeEscape(board[name]) + '&';
+            }
+        }
+    }
+
+    return url;
+}
+
+function safeEscape(value) {
+    return encodeURI(value).replace('\'','%27').replace('(','%28').replace(')','%29');
+}
+
+function safeUnescape(value) {
+    return decodeURI(value).replace('%27','\'').replace('%28','(').replace('%29',')');
+}
+
 function getUrlVars() {
     var vars = [], hash;
     var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
@@ -225,7 +310,7 @@ function getUrlVars() {
 }
 
 function getWebSocket() {
-    if( null == config ) {
+    if (null == config) {
         return new WebSocket('ws://localhost:1081/1.0/metric/get');
     } else {
         return new WebSocket('ws://' + config.cubeServer + '/1.0/metric/get');

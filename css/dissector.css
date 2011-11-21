@@ -85,16 +85,47 @@ body {
 }
 
 .banner {
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+    -webkit-box-flex: 1;
+    width: 100%;
     font-weight: bold;
     font-size: 1.5em;
     background: #2779AA;
     color: #fff;
-    padding-left: 2em;
     padding-bottom: .2em;
     margin-bottom: .5em;
+}
+
+.banner .title {
+    padding-left: 2em;
+    -webkit-box-pack: start;
+    -webkit-box-flex: 1;
+    width: 50%
+}
+
+.banner .share {
+   -webkit-box-pack: end;
+   -webkit-box-align: end;
+   -webkit-box-flex: 1;
+   width: 50%
+}
+
+.banner .share span {
+    float: right;
+    padding-right: 1em;
+    padding-top: 2px;
 }
 
 .banner a {
     text-decoration: none;
     color: #fff;
+}
+
+#shareLinkUrl {
+    width: 100%;
+}
+
+#shareLinkUrlEmbedded {
+    width: 100%;
 }
