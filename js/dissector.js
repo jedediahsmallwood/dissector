@@ -216,7 +216,6 @@ function renderRealTimeData(series, equation, from, interval, progressBar, stopB
     var from = new Date(from + 'T00:00:00.000Z');
     var interval = parseInt(interval);
     var stop = new Date((new Date()).getTime() - interval);
-    var currentTime = from.getTime() + interval;
     var current = new Date(from.getTime() + interval);
     var next;
     var socket = getWebSocket();
@@ -237,6 +236,7 @@ function renderRealTimeData(series, equation, from, interval, progressBar, stopB
 
         if (!shiftingMode && (current.getTime() >= stop.getTime())) {
             shiftingMode = true;
+            chart.redraw();
         }
 
         series.addPoint(point, true, shiftingMode);
@@ -252,7 +252,7 @@ function renderRealTimeData(series, equation, from, interval, progressBar, stopB
             if (timeout <= 0) {
                 timeout = interval;
             }
-
+            console.info('Setting timeout for ' + timeout + ' ms');
             setTimeout(function() {
                 socket.send('{"expression":"' + equation + '","start":"' + current.toISOString() + '", "stop": "' + next.toISOString() + '", "step": ' + interval + '}');
                 current = next;
