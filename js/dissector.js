@@ -266,7 +266,8 @@ function renderRealTimeData(series, equation, from, interval, progressBar, stopB
 
 function generateShareLink(board) {
 
-    var url = window.location.protocol + '//' + window.location.pathname + '?';
+    var currentUrl = $.url();
+    var url = currentUrl.attr('protocol') + '://' + currentUrl.attr('path') + '?';
 
     for (var name in board) {
         if (board.hasOwnProperty(name)) {
@@ -289,7 +290,7 @@ function safeUnescape(value) {
 
 function getUrlVars() {
     var vars = [], hash;
-    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    var hashes = $.url().attr('query').split('&');
     for (var i = 0; i < hashes.length; i++) {
         hash = hashes[i].split('=');
         vars.push(hash[0]);
