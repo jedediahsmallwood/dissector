@@ -280,11 +280,11 @@ function generateShareLink(board) {
 }
 
 function safeEscape(value) {
-    return encodeURI(value).replace('\'', '%27').replace('(', '%28').replace(')', '%29');
+    return encodeURI(value).replace(/\'/g, '%27').replace(/\(/g, '%28').replace(/\)/g, '%29');
 }
 
 function safeUnescape(value) {
-    return decodeURI(value).replace('%27', '\'').replace('%28', '(').replace('%29', ')');
+    return decodeURI(value).replace(/%27/g, '\'').replace(/%28/g, '(').replace(/%29/g, ')');
 }
 
 function getUrlVars() {
