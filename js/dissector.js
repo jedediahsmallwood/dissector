@@ -267,7 +267,7 @@ function renderRealTimeData(series, equation, from, interval, progressBar, stopB
 function generateShareLink(board) {
 
     var currentUrl = $.url();
-    var url = currentUrl.attr('protocol') + '://' + currentUrl.attr('path') + '?';
+    var url = currentUrl.attr('protocol') + '://' + currentUrl.attr('host') + currentUrl.attr('path') + '?';
 
     for (var name in board) {
         if (board.hasOwnProperty(name)) {
